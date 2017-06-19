@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Replay - DEMO</title>
+  <link rel="stylesheet" href="/leaflet/dist/leaflet.css" />
+  <script src="/leaflet/dist/leaflet.js"></script>
+  <script src="/leaflet-ellipse/l.ellipse.min.js"></script>
+  <script src="/dashjs/dist/dash.all.min.js"></script>
+  <script src="/config.js"></script>
+  <script src="/player.js"></script>
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body {
+      font-family: arial;
+    }
+    #search-control > header {
+      background-color: rgb(195, 195, 195);
+      color: white;
+      font-weight: bold;
+    }
+    #search-control > ul {
+      list-style-type: none;
+      display: flex;
+      justify-content: space-around;
+      padding: 0;
+      margin: 0;
+    }
+    #search-control > ul > li > button {
+      padding: 12px 24px;
+      margin: 0;
+    }
+    #results > header {
+      background-color: rgb(195, 195, 195);
+      color: white;
+      font-weight: bold;
+    }
+    #results > ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    #results > ul > li {
+      text-align: center;
+      height: 50px;
+      width: 100%;
+      border-bottom: 1px solid black;
+      display: flex;
+    }
+    #results > ul > li > div {
+      text-align: center;
+      width: 100px;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    #side-bar.expand {
+      min-height: 100%;
+      /*transition: height 3s ease;*/
+    }
+    #side-bar {
+      min-height: 0%;
+      transition: min-height .25s;
+    }
+    #collapse {
+      cursor: pointer;
+      text-align: center;
+      position: absolute;
+      bottom: 1px;
+      height: 17px;
+      width: 100%;
+    }
+    .item-controls {
+      padding: 0 !important;
+      width: 20px !important;
+      background-color: black;
+      visibility: hidden;
+    }
+    #results > ul > li:hover > .item-controls {
+      visibility: visible;
+    }
+    #results > ul > li:hover {
+      background-color: #f5f5f5;
+    }
+    .item-controls button {
+      font-size: 14px;
+      padding: 0;
+      margin: 0;
+      color: white !important;
+    }
+    #nav-bar > a {
+      padding: 0px 15px;
+      text-decoration: blink;
+      display: inline-block;
+      background: rgba(0, 0, 0, 0);
+      border: none;
+      height: 100%;
+      align-items: flex-start;
+      margin: 0 10px;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 1s ease;
+      line-height: 250%;
+    }
+    #nav-bar > a:hover {
+      background: rgba(200, 200, 200, 0.3) !important;
+    }
+    #results li.headers {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-bar">
+    <a href="/">Map</a>
+    <a href="/files.html">Files</a>
+  </div>
+
+  <div id="control-layers" style="height: calc(100vh - 50px); position: absolute;">
+    <div id="side-bar">
+      <div id="search-control">
+        <header>
+          <button>&gt;</button>
+          <!-- <button>&#129170;</button> -->
+          <span>Search</span>
+        </header>
+        <ul>
+          <li>
+            <button id="rectangle" onclick="toggleSearchMode(this)">Search</button>
+            <!-- <button id="rectangle" onclick="toggleSearchMode(this)">Rectangle</button> -->
+          </li>
+<!--           <li>
+            <button id="circle" onclick="toggleSearchMode(this)">Circle</button>
+          </li>
+          <li>
+            <button id="polygon" onclick="toggleSearchMode(this)">Polygon</button>
+          </li> -->
+        </ul>
+      </div>
+      <div id="results">
+        <header>
+          <button>&gt;</button>
+          <span>Resulsts</span>
+        </header>
+        <ul>
+<!--           <li>
+            <div>
+              <span>12/07/2017</span>
+              <span>12:25:13</span>
+            </div>
+            <div>
+              <span>16:15:12</span>
+            </div>
+            <div>
+              <span>not known...</span>
+            </div>
+            <div>
+              <span>not known...</span>
+            </div>
+            <div>
+              <span>test</span>
+            </div>
+            <div>
+              <span>1,500</span>
+            </div>
+          </li>
+ -->        </ul>
+      </div>
+  <!--     <div id="controllers">
+        <button id="rectangle" onclick="setSearchFn(this)">Rectangle</button>
+        <button id="circle" onclick="setSearchFn(this)">Circle</button>
+        <button id="search" onclick="search()">Search</button>
+      </div> -->
+      <div id="collapse" onclick="togglSideBar()">&#119064;</div>
+    </div>
+  </div>
+
+  <video id="player" class="inactive" autoplay preload="none" controls="true">
+    <source id="mpd" type="application/dash+xml">
+    <track id="vtt" default kind="metadata" type="text/vtt">
+  </video>
+
+  <div id="map"></div>
+
+  <script src="map-tools.js"></script>
+  <script src="api.js"></script>
+  <script>
+    var player = document.querySelector('#player');
+    var mpd = document.querySelector('#mpd');
+    var vtt = document.querySelector('#vtt');
+    var list = document.querySelector('#results > ul');
+
+    var center = L.latLng(32.0905, 34.825);
+    var map = L.map('map', {
+      center: center,
+      zoom: 18,
+      zoomControl: false
+    });
+
+    L.tileLayer(config.tiles.urlTemplate, {
+      attribution: config.tiles.attribution,
+    }).addTo(map);
+
+    L.control.zoom({
+      // position:'topright'
+      position:'bottomright'
+    }).addTo(map);
+
+
+    var polyline = L.polyline([[0, 0], [0, 0]]).addTo(map)
+    polyline.setStyle({ opacity: 0 })
+
+    var marker = L.marker([0,0]).addTo(map);
+    marker.setOpacity(0)
+
+    var rectangle = L.rectangle([[0,0], [0,0]], {
+      stroke: true,
+      color: "#ff7800",
+      weight: 3,
+      opacity: 0,
+      fillOpacity: 0
+    }).addTo(map);
+
+    var circle = L.ellipse(center, [0, 0], 0, {
+      stroke: true,
+      color: "#ff7800",
+      weight: 3,
+      opacity: 0,
+      fillOpacity: 0
+    }).addTo(map);
+
+    var dashPlayer = dashjs.MediaPlayer().create();
+    dashPlayer.getDebug().setLogToBrowserConsole(false);
+    dashPlayer.initialize(window.player);
+
+/*    rectangle.on('click', function(e) {
+      var northWest = e.target.getBounds().getNorthWest()//.map(v => v.toFixed(2)).join();
+      var southEast = e.target.getBounds().getSouthEast()//.map(v => v.toFixed(2)).join();
+      rectangle.bindPopup('<b>' + northWest + '</b><br /><b>' + southEast + '</b>')
+    })*/
+  </script>
+</body>
+</html>

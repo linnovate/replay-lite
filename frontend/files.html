@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Replay - DEMO</title>
+  <style>
+    progress {
+      -webkit-appearance: none;
+      /*width: 300px;*/
+    }
+    progress[value]::-webkit-progress-bar {
+      background-color: #eee;
+      border-radius: 2px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+    }
+    progress[value]::-webkit-progress-value {
+      background-color: #09c;
+      border-radius: 2px;
+      background-size: 35px 20px, 100% 100%, 100% 100%;
+    }
+    progress[value].success::-webkit-progress-value {
+      background-color: #0c0;
+    }
+    progress[value].failure::-webkit-progress-value {
+      background-color: #c00;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload file</h1>
+  <input onchange="resetProgress()" id="file" type="file" />
+  <button onclick="validate()">Upload</button>
+  <div>
+    <progress value="0" max="1"></progress>
+  </div>
+  <script>
+    var input = document.querySelector('#file');
+    var progress = document.querySelector('progress');
+
+    function validate() {
+      var file = input.files[0];
+      if(!file) throw new Error('No file is specified to upload');
+      if(file.type != 'video/mp4') throw new Error('Incompatible file type ' + file.type);
+      progress.classList.remove('success');
+      progress.classList.remove('failure');
+      upload(file)
+    }
+
+    function upload(file) {
+      var formData = new FormData();
+      var xhr = new XMLHttpRequest();
+
+      formData.append('file', file);
+      xhr.open('POST', '/api/upload', true);
+      xhr.onload = function() {
+        if(xhr.status != 200) {
+          console.log(xhr.response);
+          progress.classList.add('failure');
+        } else {
+          progress.classList.add('success');
+        }
+      }
+      xhr.upload.onprogress = function(e) {
+        progress.max = e.total;
+        progress.value = e.loaded;
+      }
+      xhr.send(formData);
+    }
+
+    function resetProgress() {
+      progress.max = 1;
+      progress.value = 0;
+    }
+  </script>
+</body>
+</html>

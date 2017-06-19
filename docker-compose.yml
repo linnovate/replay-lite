@@ -1,0 +1,92 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    # ports:
+    #   - 5672:5672
+    #   - 15672:15672
+    restart: always
+
+  mongodb:
+    image: mongo
+    restart: always
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: replay
+    #   MONGO_INITDB_ROOT_PASSWORD: replay
+    # ports:
+    #   - 27017:27017
+    command: --smallfiles
+
+  watcher:
+    build: '.'
+    image: 'my-replay'
+    environment:
+      RABBITMQ_URL: 'amqp://rabbitmq'
+      MONGODB_URL: 'mongodb://mongodb/replay'
+    volumes:
+      - './content:/usr/src/app/content'
+    command: 'node watcher'
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  gopro:
+    build: '.'
+    image: 'my-replay'
+    environment:
+      RABBITMQ_URL: 'amqp://rabbitmq'
+      MONGODB_URL: 'mongodb://mongodb/replay'
+    volumes:
+      - './content:/usr/src/app/content'
+    command: 'node gopro'
+    restart: 'always'
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  api:
+    build: '.'
+    image: 'my-replay'
+    environment:
+      RABBITMQ_URL: 'amqp://rabbitmq'
+      MONGODB_URL: 'mongodb://mongodb/replay'
+    volumes:
+      - './content:/usr/src/app/content'
+    command: 'node api'
+    depends_on:
+      - mongodb
+      - rabbitmq
+      - wowza
+
+  wowza:
+    image: wowzamedia/wowza-streaming-engine-linux
+    entrypoint: /sbin/entrypoint.sh
+    ports:
+      # - 1935:1935
+      - 8086:8086
+      - 8087:8087
+      - 8088:8088
+    environment:
+      WSE_MGR_USER: avraham
+      WSE_MGR_PASS: newstart
+      WSE_LIC: EDEV4-UyHbk-abawC-v74N9-KCGmZ-DQAaH-7bBNEfbKuaR
+      WSE_IP_PARAM: '172.18.0.1'
+    volumes:
+      - ./content/video:/usr/local/WowzaStreamingEngine/content
+
+  frontend:
+    image: nginx
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+  proxy:
+    image: nginx
+    volumes:
+      - ./proxy/proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - 8080:80
+    depends_on:
+      - wowza
+      - api
+      - frontend

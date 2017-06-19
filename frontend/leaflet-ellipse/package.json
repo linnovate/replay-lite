@@ -1,0 +1,80 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "https://github.com/jdfergason/Leaflet.Ellipse.git",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": "https://github.com/jdfergason/Leaflet.Ellipse.git",
+        "spec": "git+https://github.com/jdfergason/Leaflet.Ellipse.git",
+        "type": "hosted",
+        "hosted": {
+          "type": "github",
+          "ssh": "git@github.com:jdfergason/Leaflet.Ellipse.git",
+          "sshUrl": "git+ssh://git@github.com/jdfergason/Leaflet.Ellipse.git",
+          "httpsUrl": "git+https://github.com/jdfergason/Leaflet.Ellipse.git",
+          "gitUrl": "git://github.com/jdfergason/Leaflet.Ellipse.git",
+          "shortcut": "github:jdfergason/Leaflet.Ellipse",
+          "directUrl": "https://raw.githubusercontent.com/jdfergason/Leaflet.Ellipse/master/package.json"
+        }
+      },
+      "/home/avraham/Development/my-replay"
+    ]
+  ],
+  "_from": "git+https://github.com/jdfergason/Leaflet.Ellipse.git",
+  "_id": "leaflet-ellipse@0.9.1",
+  "_inCache": true,
+  "_location": "/leaflet-ellipse",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "https://github.com/jdfergason/Leaflet.Ellipse.git",
+    "scope": null,
+    "escapedName": null,
+    "name": null,
+    "rawSpec": "https://github.com/jdfergason/Leaflet.Ellipse.git",
+    "spec": "git+https://github.com/jdfergason/Leaflet.Ellipse.git",
+    "type": "hosted",
+    "hosted": {
+      "type": "github",
+      "ssh": "git@github.com:jdfergason/Leaflet.Ellipse.git",
+      "sshUrl": "git+ssh://git@github.com/jdfergason/Leaflet.Ellipse.git",
+      "httpsUrl": "git+https://github.com/jdfergason/Leaflet.Ellipse.git",
+      "gitUrl": "git://github.com/jdfergason/Leaflet.Ellipse.git",
+      "shortcut": "github:jdfergason/Leaflet.Ellipse",
+      "directUrl": "https://raw.githubusercontent.com/jdfergason/Leaflet.Ellipse/master/package.json"
+    }
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "git+https://github.com/jdfergason/Leaflet.Ellipse.git#f8b1fcabaf87e9d4db4600e267332f96efc16746",
+  "_shasum": "2563c508d7590c669a77be578e05dcbcb9c82c30",
+  "_shrinkwrap": null,
+  "_spec": "https://github.com/jdfergason/Leaflet.Ellipse.git",
+  "_where": "/home/avraham/Development/my-replay",
+  "bugs": {
+    "url": "https://github.com/jdfergason/Leaflet.Ellipse/issues"
+  },
+  "dependencies": {},
+  "description": "A basic ellipse type for Leaflet, a JS library for interactive maps.",
+  "devDependencies": {},
+  "gitHead": "f8b1fcabaf87e9d4db4600e267332f96efc16746",
+  "homepage": "https://github.com/jdfergason/Leaflet.Ellipse#readme",
+  "keywords": [
+    "gis",
+    "map"
+  ],
+  "license": "Apache 2.0",
+  "main": "l.ellipse.js",
+  "name": "leaflet-ellipse",
+  "optionalDependencies": {},
+  "readme": "Leaflet.ellipse\n===============\n\nA basic ellipse type for [Leaflet](http://leafletjs.com), a JS \nlibrary for interactive maps.  Allows specification of semi-major and\nsemi-minor axis as well as a tilt degrees from west.\n\n*Supports Leaflet 1.0.0 or newer.*\n\n## Supported browsers\n\n* Internet Explorer 10+\n* Google Chrome\n* Safari\n* Firefox 17+\n\n## Demo\n\nA demo is available on the Github Pages webpage for Leaflet.ellipse [here](http://jdfergason.github.io/Leaflet.Ellipse/).\n\n## Usage\n\nInclude the ellipse javasript file:\n\n    <script src=\"l.ellipse.js\"></script>\n\nAfter instantiating the map create a new ellipse.\n\n    var ellipse = L.ellipse([51.5, -0.09], [500, 100], 90).addTo(map);\n\n## API\n\n*Factory method*\n\n    L.ellipse( <LatLng> latlng, <Radii> radii, <Number> tilt, \n               <Path options> options? )\n\n * latlng  - The position of the center of the ellipse.\n * radii   - The semi-major and semi-minor axis in meters\n * tilt    - The rotation of the ellipse in degrees from west\n * options - Options dictionary to pass to L.Path\n\n## License\n\nThis code is provided under the Apache 2.0 license.\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jdfergason/Leaflet.Ellipse.git"
+  },
+  "version": "0.9.1"
+}
