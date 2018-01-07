@@ -70,7 +70,7 @@ services:
     environment:
       WSE_MGR_USER: avraham
       WSE_MGR_PASS: newstart
-      WSE_LIC: EDEV4-UyHbk-abawC-v74N9-KCGmZ-DQAaH-7bBNEfbKuaR
+      WSE_LIC: EDEV4-npZ8M-nE4ZF-k8drp-nkNHK-ye877-4fRGv3MGN3tw
       WSE_IP_PARAM: '172.18.0.1'
     volumes:
       - ./content/video:/usr/local/WowzaStreamingEngine/content
