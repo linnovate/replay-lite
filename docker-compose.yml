@@ -16,7 +16,7 @@ services:
     #   MONGO_INITDB_ROOT_PASSWORD: replay
     # ports:
     #   - 27017:27017
-    command: --smallfiles
+    # command: --smallfiles
 
   watcher:
     build: '.'
