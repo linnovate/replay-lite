@@ -11,21 +11,19 @@ services:
   mongodb:
     image: mongo
     restart: always
-    # environment:
-    #   MONGO_INITDB_ROOT_USERNAME: replay
-    #   MONGO_INITDB_ROOT_PASSWORD: replay
-    # ports:
-    #   - 27017:27017
-    # command: --smallfiles
+    # set initial admin credentials
+    #environment:
+    #  MONGO_INITDB_ROOT_USERNAME: replay
+    #  MONGO_INITDB_ROOT_PASSWORD: replay
 
   watcher:
     build: '.'
-    image: 'my-replay'
+    image: 'replay-lite'
     environment:
       RABBITMQ_URL: 'amqp://rabbitmq'
       MONGODB_URL: 'mongodb://mongodb/replay'
     volumes:
-      - './content:/usr/src/app/content'
+      - './:/usr/src/app'
     command: 'node watcher'
     depends_on:
       - mongodb
@@ -33,60 +31,69 @@ services:
 
   gopro:
     build: '.'
-    image: 'my-replay'
+    image: 'replay-lite'
     environment:
       RABBITMQ_URL: 'amqp://rabbitmq'
       MONGODB_URL: 'mongodb://mongodb/replay'
     volumes:
-      - './content:/usr/src/app/content'
+      - './:/usr/src/app'
     command: 'node gopro'
     restart: 'always'
     depends_on:
       - mongodb
       - rabbitmq
 
-  api:
+  shrink:
     build: '.'
-    image: 'my-replay'
+    image: 'replay-lite'
     environment:
       RABBITMQ_URL: 'amqp://rabbitmq'
       MONGODB_URL: 'mongodb://mongodb/replay'
     volumes:
-      - './content:/usr/src/app/content'
+      - './:/usr/src/app'
+    command: 'node shrink'
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  dash:
+    build: '.'
+    image: 'replay-lite'
+    environment:
+      RABBITMQ_URL: 'amqp://rabbitmq'
+      MONGODB_URL: 'mongodb://mongodb/replay'
+    volumes:
+      - './:/usr/src/app'
+    command: 'node dash'
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  api:
+    build: '.'
+    image: 'replay-lite'
+    environment:
+      RABBITMQ_URL: 'amqp://rabbitmq'
+      MONGODB_URL: 'mongodb://mongodb/replay'
+    volumes:
+      - './:/usr/src/app/'
     command: 'node api'
     depends_on:
       - mongodb
       - rabbitmq
-      - wowza
-
-  wowza:
-    image: wowzamedia/wowza-streaming-engine-linux
-    entrypoint: /sbin/entrypoint.sh
-    ports:
-      # - 1935:1935
-      - 8086:8086
-      - 8087:8087
-      - 8088:8088
-    environment:
-      WSE_MGR_USER: avraham
-      WSE_MGR_PASS: newstart
-      WSE_LIC: EDEV4-npZ8M-nE4ZF-k8drp-nkNHK-ye877-4fRGv3MGN3tw
-      WSE_IP_PARAM: '172.18.0.1'
-    volumes:
-      - ./content/video:/usr/local/WowzaStreamingEngine/content
 
   frontend:
     image: nginx
     volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+      - ./frontend:/usr/share/nginx/html
 
   proxy:
     image: nginx
     volumes:
       - ./proxy/proxy.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./content/video:/var/www/video
     ports:
       - 8080:80
     depends_on:
-      - wowza
       - api
       - frontend

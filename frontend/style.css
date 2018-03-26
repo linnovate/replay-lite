@@ -45,8 +45,8 @@ button.active {
 #side-bar {
   background-color: white;
   position: absolute;
-  width: 500px;
-  min-width: 500px;
+  /*width: 500px;*/
+  min-width: 220px;
   box-shadow: 1px 0px 11px 0px #888888;
   z-index: 700;
 }

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 const chokidar = require('chokidar');
 const queue = require('../utils/queue')
 
@@ -14,7 +13,6 @@ const watcher = chokidar.watch(dropfolder, {
 function checkComplete(path, stats) {
   setTimeout(() => {
     fs.stat(path, (err, s) => {
-      // console.log(stats.mtime, s.mtime)
       if(s.mtime.getTime() == stats.mtime.getTime()) {
         console.log('File', path, 'has been added');
         queue('GoProFile', path)

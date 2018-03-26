@@ -140,7 +140,7 @@
       <div id="results">
         <header>
           <button>&gt;</button>
-          <span>Resulsts</span>
+          <span>Results</span>
         </header>
         <ul>
 <!--           <li>
@@ -190,10 +190,9 @@
     var vtt = document.querySelector('#vtt');
     var list = document.querySelector('#results > ul');
 
-    var center = L.latLng(32.0905, 34.825);
     var map = L.map('map', {
-      center: center,
-      zoom: 18,
+      center: config.map.center,
+      zoom: config.map.zoom,
       zoomControl: false
     });
 

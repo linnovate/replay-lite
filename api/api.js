@@ -1,5 +1,11 @@
 const formidable = require('formidable');
 const GoPro = require('../models/gopro');
+const fs = require('fs-extra');
+
+const DROPFOLDER = 'content/dropfolder';
+
+// create dropfolder first time
+fs.ensureDirSync(DROPFOLDER);
 
 module.exports = {
   search,
@@ -58,8 +64,9 @@ function vtt(req, res) {
 function upload(req, res) {
   console.log(req.url)
   var form = new formidable.IncomingForm();
-  form.uploadDir = 'content/dropfolder';
+  form.uploadDir = DROPFOLDER;
   form.keepExtensions = true;
+  form.maxFileSize = 1000 * 1024 * 1024; // 1 GB
   form.parse(req, function(err, fields, files) {
     if(err) {
       console.log(err);

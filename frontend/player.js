@@ -1,6 +1,6 @@
 function play(id) {
   var url = new URL(location);
-  url.pathname = '/vod/mp4:' + id + '.mp4/manifest.mpd';
+  url.pathname = '/video/' + id + '/manifest.mpd';
   console.log(url)
 
   dashPlayer.attachSource(url.href);

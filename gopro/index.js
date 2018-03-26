@@ -3,17 +3,15 @@ const path = require('path');
 const Stream = require('stream');
 const gpmd = require('../utils/gpmd');
 const rabbitmq = require('../utils/rabbitmq');
+const queue = require('../utils/queue');
 const mongooseConnect = require('../utils/mongoose-connect');
 const GoPro = require('../models/gopro');
 mongooseConnect()
 
-const url = process.env.RABBITMQ_URL || 'amqp://localhost';
-const queue = 'GoProFile';
+const queueName = 'GoProFile';
 
-var attempts = 5;
-
-rabbitmq({ queue }, function(conn, ch) {
-  ch.consume(queue, function(msg) {
+rabbitmq({ queue: queueName }, function(conn, ch) {
+  ch.consume(queueName, function(msg) {
     const file = msg.content.toString();
     gpmd.decodeFile(file, {
       readableObjectMode: true
@@ -29,17 +27,11 @@ rabbitmq({ queue }, function(conn, ch) {
           duration: stream.duration,
         }))
         .on('index', (id) => {
-          var dest = path.format({
-            dir: path.dirname(file).replace('dropfolder', 'video'),
-            ext: path.extname(file),
-            name: id
-          })
-          console.log('Moving file ' + path.basename(file) + ' to ' + dest)
-          fs.rename(file, dest, function(err) {
-            if(err) throw err;
-            console.log('Finished')
-            ch.ack(msg);
-          });
+          queue('ShrinkFile', JSON.stringify({
+            origin: file,
+            id: id
+          }));
+          ch.ack(msg);
         })
     })
   });

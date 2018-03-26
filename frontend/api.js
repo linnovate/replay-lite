@@ -87,9 +87,9 @@ function appendHeaders() {
   li.innerHTML = ''
     + '<div>Date</div>'
     + '<div>Duration</div>'
-    + '<div>Source</div>'
-    + '<div>Source ID</div>'
-    + '<div>Views</div>'
+    // + '<div>Source</div>'
+    // + '<div>Source ID</div>'
+    // + '<div>Views</div>'
     + '<div style="width: 20px;"></div>';
   window.list.appendChild(li);
 }
@@ -112,14 +112,14 @@ function appendToList(ele) {
   // duration
   html += '<div class="item-duration"><span>' + formatTime(duration) + '</span></div>';
 
-  // source
-  html += '<div class="item-source"><span>not known...</span></div>';
+  // // source
+  // html += '<div class="item-source"><span>not known...</span></div>';
 
-  // camera ID
-  html += '<div class="item-source-id"><span>not known...</span></div>';
+  // // camera ID
+  // html += '<div class="item-source-id"><span>not known...</span></div>';
 
-  // views
-  html += '<div class="item-views"><span>N/A</span></div>';
+  // // views
+  // html += '<div class="item-views"><span>N/A</span></div>';
 
   // controls
   html += '<div class="item-controls">';
